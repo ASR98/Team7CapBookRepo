@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.capbook.beans.User;
-import com.cg.capbook.exception.UserNotFoundException;
+import com.cg.capbook.exceptions.IncorrectPasswordException;
+import com.cg.capbook.exceptions.UserNotFoundException;
 import com.cg.capbook.services.UserServices;
 
 @RestController
@@ -27,8 +28,8 @@ public ResponseEntity<String> acceptUserDetails(@RequestBody  User user){
 	return new ResponseEntity<String>("User details accepted", HttpStatus.OK);
 }
 @RequestMapping(value="/signIn",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-public ResponseEntity<String> getUserDetails(@RequestParam String emailid) throws UserNotFoundException{
-	User user=userServices.getUserDetails(emailid);
+public ResponseEntity<String> getUserDetails(@RequestParam String emailid,@RequestParam String password) throws UserNotFoundException, IncorrectPasswordException{
+	User user=userServices.getUserDetails(emailid,password);
 	return new ResponseEntity<String>(user.toString(), HttpStatus.OK);
 }
 }

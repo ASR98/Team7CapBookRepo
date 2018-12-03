@@ -1,32 +1,31 @@
-package com.cg.capbook.exception;
+package com.cg.capbook.exceptions;
 
-public class UserNotFoundException extends Exception{
+public class IncorrectPasswordException extends Exception{
 
-	public UserNotFoundException() {
+	public IncorrectPasswordException() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserNotFoundException(String message, Throwable cause, boolean enableSuppression,
+	public IncorrectPasswordException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserNotFoundException(String message, Throwable cause) {
+	public IncorrectPasswordException(String message, Throwable cause) {
 		super(message, cause);
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserNotFoundException(String message) {
+	public IncorrectPasswordException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserNotFoundException(Throwable cause) {
+	public IncorrectPasswordException(Throwable cause) {
 		super(cause);
 		// TODO Auto-generated constructor stub
 	}
 
-	
 }
