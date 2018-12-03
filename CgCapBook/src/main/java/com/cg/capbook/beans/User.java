@@ -5,14 +5,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.Email;
 
-@Entity
+@Entity(name="UserDetails")
 public class User {
 	@Id
 	@SequenceGenerator(initialValue = 101, name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
 	@GeneratedValue(generator="user_seq",strategy=GenerationType.AUTO)
-	private int userId;
-	private String firstName,lastName,emailid,gender;
+	private int UserId;
+	private String emailid;
+	private String firstName,lastName,gender;
 	private long phoneNumber;
 	private String dateOfBirth;
 	private String password,confirmPassword;
@@ -20,18 +22,45 @@ public class User {
 	public User() {
 		super();
 	}
-
-	public User(String firstName, String lastName, String emailid, String gender, long phoneNumber, String dateOfBirth,
+	
+	public User(String emailid, String firstName, String lastName, String gender, long phoneNumber, String dateOfBirth,
 			String password, String confirmPassword) {
 		super();
+		this.emailid = emailid;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.emailid = emailid;
 		this.gender = gender;
 		this.phoneNumber = phoneNumber;
 		this.dateOfBirth = dateOfBirth;
 		this.password = password;
 		this.confirmPassword = confirmPassword;
+	}
+	
+
+
+
+
+
+	public User(int userId, String emailid, String firstName, String lastName, String gender, long phoneNumber,
+			String dateOfBirth, String password, String confirmPassword) {
+		super();
+		UserId = userId;
+		this.emailid = emailid;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.gender = gender;
+		this.phoneNumber = phoneNumber;
+		this.dateOfBirth = dateOfBirth;
+		this.password = password;
+		this.confirmPassword = confirmPassword;
+	}
+
+	public int getUserId() {
+		return UserId;
+	}
+
+	public void setUserId(int userId) {
+		UserId = userId;
 	}
 
 	public String getFirstName() {
@@ -98,10 +127,13 @@ public class User {
 		this.confirmPassword = confirmPassword;
 	}
 
+	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + UserId;
 		result = prime * result + ((confirmPassword == null) ? 0 : confirmPassword.hashCode());
 		result = prime * result + ((dateOfBirth == null) ? 0 : dateOfBirth.hashCode());
 		result = prime * result + ((emailid == null) ? 0 : emailid.hashCode());
@@ -113,6 +145,10 @@ public class User {
 		return result;
 	}
 
+
+
+
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -122,6 +158,8 @@ public class User {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
+		if (UserId != other.UserId)
+			return false;
 		if (confirmPassword == null) {
 			if (other.confirmPassword != null)
 				return false;
@@ -164,9 +202,11 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "SignUp [firstName=" + firstName + ", lastName=" + lastName + ", emailid=" + emailid + ", gender=" + gender
-				+ ", phoneNumber=" + phoneNumber + ", dateOfBirth=" + dateOfBirth + ", password=" + password
-				+ ", confirmPassword=" + confirmPassword + "]";
+		return "User [UserId=" + UserId + ", emailid=" + emailid + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", gender=" + gender + ", phoneNumber=" + phoneNumber + ", dateOfBirth=" + dateOfBirth + ", password="
+				+ password + ", confirmPassword=" + confirmPassword + "]";
 	}
+
+
 
 }
