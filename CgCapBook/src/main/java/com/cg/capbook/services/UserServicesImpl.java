@@ -37,6 +37,9 @@ public class UserServicesImpl implements UserServices{
 	public void sendFriendRequest(String senderEmail, String receiverEmail) throws UserNotFoundException {
 		userDAO.findById(senderEmail).orElseThrow(()->new UserNotFoundException("User Details Not found"));
 		userDAO.findById(receiverEmail).orElseThrow(()->new UserNotFoundException("User Details Not found"));
+		if(senderEmail.equals(receiverEmail)) throw new UserNotFoundException("Cannot send to your own account");
+		FriendRequest request=friendRequestDAO.getFriendRequestId(senderEmail, receiverEmail);
+		if(request!=null) throw new UserNotFoundException("Request already sent");
 		FriendRequest friendRequest=new FriendRequest(senderEmail,receiverEmail);
 		friendRequestDAO.save(friendRequest);
 	}
@@ -64,6 +67,8 @@ public class UserServicesImpl implements UserServices{
 		ArrayList<String> friendList = new ArrayList<>();
 		if(user.getFriendList().isEmpty())
 			System.out.println("What a loser. No friends");
+		else
+			System.out.println("Good for you");
 		for(String email : user.getFriendList())
 			friendList.add(userDAO.findById(email).get().getFullName());
 		return friendList;

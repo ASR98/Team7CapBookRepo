@@ -15,7 +15,7 @@ public class User implements Serializable {
 	private String dateOfBirth;
 	private String password,confirmPassword;
 	private String fullName;
-	@Column(length=1000)
+	
 	private ArrayList<String> friendList;
 	public User() {
 		super();
@@ -107,10 +107,11 @@ public class User implements Serializable {
 	}
 
 	public String getFullName() {
+		setFullName();
 		return fullName;
 	}
 
-	public void setFullName(String fullName) {
+	public void setFullName() {
 		this.fullName = firstName+" "+lastName;;
 	}
 
