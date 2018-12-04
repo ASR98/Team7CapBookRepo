@@ -1,20 +1,22 @@
 package com.cg.capbook.beans;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
+import java.io.Serializable;
+import java.util.ArrayList;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 @Entity(name="Users")
-public class User {
+public class User implements Serializable {
 	@Id
 	private String emailid;
 	private String firstName,lastName,gender;
 	private long phoneNumber;
 	private String dateOfBirth;
 	private String password,confirmPassword;
-
+	private String fullName;
+	@Column(length=1000)
+	private ArrayList<String> friendList;
 	public User() {
 		super();
 	}
@@ -96,6 +98,22 @@ public class User {
 		this.confirmPassword = confirmPassword;
 	}
 
+	public ArrayList<String> getFriendList() {
+		return friendList;
+	}
+
+	public void setFriendList(ArrayList<String> friendList) {
+		this.friendList = friendList;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = firstName+" "+lastName;;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -163,8 +181,7 @@ public class User {
 	@Override
 	public String toString() {
 		return "SignUp [firstName=" + firstName + ", lastName=" + lastName + ", emailid=" + emailid + ", gender=" + gender
-				+ ", phoneNumber=" + phoneNumber + ", dateOfBirth=" + dateOfBirth + ", password=" + password
-				+ ", confirmPassword=" + confirmPassword + "]";
+				+ ", phoneNumber=" + phoneNumber + ", dateOfBirth=" + dateOfBirth + "]";
 	}
 
 

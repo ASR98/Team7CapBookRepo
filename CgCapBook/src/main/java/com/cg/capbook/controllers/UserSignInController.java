@@ -1,5 +1,7 @@
 package com.cg.capbook.controllers;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,4 +34,12 @@ public ResponseEntity<String> getUserDetails(@RequestParam String emailid,@Reque
 	User user=userServices.getUserDetails(emailid,password);
 	return new ResponseEntity<String>(user.toString(), HttpStatus.OK);
 }
+
+@RequestMapping(value="/getFriendList",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
+public ResponseEntity<ArrayList<String>> getUserFriendDetails(@RequestParam("emailid") String emailid) throws UserNotFoundException, IncorrectPasswordException{
+	ArrayList<String> friendList =userServices.getUserFriendList(emailid);
+	return new ResponseEntity<>(friendList, HttpStatus.OK);
+}
+
+
 }
