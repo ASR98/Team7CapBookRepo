@@ -101,16 +101,25 @@ public class UserServicesImpl implements UserServices{
 	else throw new IncorrectPasswordException("Incorrect Question or Answer");
 	}
 	@Override
-	public ArrayList<String> getAllFriendRequest(String receiverEmail) throws UserNotFoundException, EmptyFriendListException {
+	public ArrayList<String> getAllFriendRequestSent(String receiverEmail) throws UserNotFoundException, EmptyFriendListException {
 		User user=userDAO.findById(receiverEmail).orElseThrow(()->new UserNotFoundException("User not found"))	;
-		ArrayList<String> friendList = friendRequestDAO.getAllFriendRequest(receiverEmail);
+		ArrayList<String> friendList = friendRequestDAO.getAllFriendRequestSent(receiverEmail);
 		if(friendList.isEmpty()) throw new EmptyFriendListException("Friend list is empty");
 		ArrayList<String> friendListName = new ArrayList<>();
 		for(String email : friendList)
 			friendListName.add(userDAO.findById(email).get().getFullName());
 		return friendListName;
 		 
+	}
+	@Override
+	public ArrayList<String> getAllFriendRequestReceived(String senderEmail)
+			throws UserNotFoundException, EmptyFriendListException {
+		User user=userDAO.findById(senderEmail).orElseThrow(()->new UserNotFoundException("User not found"))	;
+		ArrayList<String> friendList = friendRequestDAO.getAllFriendRequestReceived(senderEmail);
+		if(friendList.isEmpty()) throw new EmptyFriendListException("Friend list is empty");
+		ArrayList<String> friendListName = new ArrayList<>();
+		for(String email : friendList)
+			friendListName.add(userDAO.findById(email).get().getFullName());
+		return friendListName;
 	}	
-	
-	
 }

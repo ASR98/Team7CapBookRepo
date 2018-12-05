@@ -36,9 +36,14 @@ public class FriendRequestController {
 		userServices.deleteFriendRequest(senderEmail, receiverEmail);
 		return new ResponseEntity<String>("Request Deleted Succesfully", HttpStatus.OK);
 	}
-	@RequestMapping(value="/getAllFriendRequestList",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-	public ResponseEntity<ArrayList<String>> getAllFriendRequests(@RequestParam("emailid") String emailid) throws UserNotFoundException, IncorrectPasswordException, EmptyFriendListException{
-		ArrayList<String> friendList =userServices.getAllFriendRequest(emailid);
+	@RequestMapping(value="/getAllSentFriendRequestList",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
+	public ResponseEntity<ArrayList<String>> getAllFriendRequestsSent(@RequestParam("emailid") String emailid) throws UserNotFoundException, IncorrectPasswordException, EmptyFriendListException{
+		ArrayList<String> friendList =userServices.getAllFriendRequestSent(emailid);
+		return new ResponseEntity<>(friendList, HttpStatus.OK);
+	}
+	@RequestMapping(value="/getAllReceivedFriendRequestList",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
+	public ResponseEntity<ArrayList<String>> getAllFriendRequestsReceived(@RequestParam("emailid") String emailid) throws UserNotFoundException, IncorrectPasswordException, EmptyFriendListException{
+		ArrayList<String> friendList =userServices.getAllFriendRequestReceived(emailid);
 		return new ResponseEntity<>(friendList, HttpStatus.OK);
 	}
 }
