@@ -102,15 +102,18 @@ public class UserServicesImpl implements UserServices{
 	public void changePassword(String emailId,String oldPassword, String newPassword, String confirmNewPassword) throws UserNotFoundException, IncorrectPasswordException {
 		User user=userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User not found"));
 		if(!oldPassword.equals(user.getPassword())) throw new IncorrectPasswordException("Incorrect Password");
-		if(newPassword.equals(confirmNewPassword))
+		if(oldPassword.equals(newPassword)) throw new IncorrectPasswordException("Please Enter password that is different from old password");
+		if(newPassword.equals(confirmNewPassword)) {
 			user.setPassword(newPassword);
+		userDAO.save(user);}
 		else throw new IncorrectPasswordException("Password Mismatch");
 	}
 	@Override
 	public void forgotPassword(String emailId, String securityQuestion, String securityAnswer, String newPassword) throws UserNotFoundException, IncorrectPasswordException {
-		User user=userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User not found"))	;
-		if(user.getSecurityQuestion().equals(securityQuestion) && user.getSecurityAnswer().equals(securityAnswer))
-			user.setPassword(newPassword);
-		else throw new IncorrectPasswordException("Incorrect Question or Answer");
+	User user=userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User not found"))	;
+	if(user.getSecurityQuestion().equals(securityQuestion) && user.getSecurityAnswer().equals(securityAnswer)) {
+		user.setPassword(newPassword);
+		userDAO.save(user);}
+	else throw new IncorrectPasswordException("Incorrect Question or Answer");
 	}	
 }
