@@ -18,16 +18,16 @@ import com.cg.capbook.services.UserServices;
 @RestController
 @CrossOrigin
 public class PasswordServicesController {
-@Autowired
-UserServices userServices;
-@RequestMapping(value="/changePassword",method=RequestMethod.POST, consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE,headers="Accept=application/json")
-public ResponseEntity<String> changePassword(@RequestParam String emailId,@RequestParam String oldPassword,@RequestParam String newPassword,@RequestParam String confirmNewPassword) throws UserNotFoundException, FriendRequestException, IncorrectPasswordException{
-	userServices.changePassword(emailId, oldPassword, newPassword, confirmNewPassword);
-	return new ResponseEntity<String>("Password Changed Successfully", HttpStatus.OK);
-}
-@RequestMapping(value="/forgotPassword",method=RequestMethod.POST, consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE,headers="Accept=application/json")
-public ResponseEntity<String> forgotPassword(@RequestParam String emailId,@RequestParam String securityQuestion,@RequestParam String securityAnswer,@RequestParam String newPassword) throws UserNotFoundException, FriendRequestException, IncorrectPasswordException{
-	userServices.forgotPassword(emailId, securityQuestion, securityAnswer, newPassword);
-	return new ResponseEntity<String>("Password Changed Successfully", HttpStatus.OK);
-}
+	@Autowired
+	UserServices userServices;
+	@RequestMapping(value="/changePassword",method=RequestMethod.POST, consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE,headers="Accept=application/json")
+	public ResponseEntity<String> changePassword(@RequestParam String emailId,@RequestParam String oldPassword,@RequestParam String newPassword,@RequestParam String confirmNewPassword) throws UserNotFoundException, FriendRequestException, IncorrectPasswordException{
+		userServices.changePassword(emailId, oldPassword, newPassword, confirmNewPassword);
+		return new ResponseEntity<String>("Password Changed Successfully", HttpStatus.OK);
+	}
+	@RequestMapping(value="/forgotPassword",method=RequestMethod.POST, consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE,headers="Accept=application/json")
+	public ResponseEntity<String> forgotPassword(@RequestParam String emailId,@RequestParam String securityQuestion,@RequestParam String securityAnswer,@RequestParam String newPassword) throws UserNotFoundException, FriendRequestException, IncorrectPasswordException{
+		userServices.forgotPassword(emailId, securityQuestion, securityAnswer, newPassword);
+		return new ResponseEntity<String>("Password Changed Successfully", HttpStatus.OK);
+	}
 }

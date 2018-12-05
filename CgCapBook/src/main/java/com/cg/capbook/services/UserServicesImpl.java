@@ -1,4 +1,7 @@
 package com.cg.capbook.services;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,14 +19,27 @@ public class UserServicesImpl implements UserServices{
 	UserDAO userDAO;
 	@Autowired
 	FriendRequestDAO friendRequestDAO;
+	private String passwordHashing(String actualPassword) throws NoSuchAlgorithmException {
+		MessageDigest hashingMethod= MessageDigest.getInstance("MD5");
+		byte[] messageDigest = hashingMethod.digest(actualPassword.getBytes());
+		BigInteger signum = new BigInteger(1, messageDigest);
+		String hashPassword = signum.toString(16);
+		while(hashPassword.length()<32) {
+			hashPassword = "0" + hashPassword;
+		}
+		return hashPassword;
+	}
 	@Override
-	public User acceptUserDetails(User user) {
+	public User acceptUserDetails(User user) throws NoSuchAlgorithmException {
+		user.setPassword(passwordHashing(user.getPassword()));
+		user.setConfirmPassword(user.getPassword());
 		user=userDAO.save(user);
 		return user;
 	}
 	@Override
-	public User getUserDetails(String emailId,String password) throws UserNotFoundException, IncorrectPasswordException {
+	public User getUserDetails(String emailId,String password) throws UserNotFoundException, IncorrectPasswordException, NoSuchAlgorithmException {
 		User user=userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User Details Not found"));
+		password = passwordHashing(password);
 		if(!user.getPassword().equals(password)) throw new IncorrectPasswordException("Incorrect Password");
 		return user;
 	}
@@ -92,9 +108,9 @@ public class UserServicesImpl implements UserServices{
 	}
 	@Override
 	public void forgotPassword(String emailId, String securityQuestion, String securityAnswer, String newPassword) throws UserNotFoundException, IncorrectPasswordException {
-	User user=userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User not found"))	;
-	if(user.getSecurityQuestion().equals(securityQuestion) && user.getSecurityAnswer().equals(securityAnswer))
-		user.setPassword(newPassword);
-	else throw new IncorrectPasswordException("Incorrect Question or Answer");
+		User user=userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User not found"))	;
+		if(user.getSecurityQuestion().equals(securityQuestion) && user.getSecurityAnswer().equals(securityAnswer))
+			user.setPassword(newPassword);
+		else throw new IncorrectPasswordException("Incorrect Question or Answer");
 	}	
 }

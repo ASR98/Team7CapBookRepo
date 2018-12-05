@@ -1,4 +1,5 @@
 package com.cg.capbook.services;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import com.cg.capbook.beans.User;
 import com.cg.capbook.exceptions.EmptyFriendListException;
@@ -6,8 +7,8 @@ import com.cg.capbook.exceptions.FriendRequestException;
 import com.cg.capbook.exceptions.IncorrectPasswordException;
 import com.cg.capbook.exceptions.UserNotFoundException;
 public interface UserServices {
-	User acceptUserDetails(User user);
-	User getUserDetails(String emailId,String password) throws UserNotFoundException, IncorrectPasswordException;
+	User acceptUserDetails(User user) throws NoSuchAlgorithmException;
+	User getUserDetails(String emailId,String password) throws UserNotFoundException, IncorrectPasswordException, NoSuchAlgorithmException;
 	public ArrayList<User> getAllUsers();
 	void sendFriendRequest(String senderEmail,String receiverEmail) throws UserNotFoundException, FriendRequestException;
 	void acceptFriendRequest(String senderEmail,String receiverEmail) throws UserNotFoundException, FriendRequestException;
