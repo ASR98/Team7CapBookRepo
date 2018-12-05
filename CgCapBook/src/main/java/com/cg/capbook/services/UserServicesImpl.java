@@ -1,14 +1,13 @@
 package com.cg.capbook.services;
-
 import java.util.ArrayList;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.cg.capbook.beans.FriendRequest;
 import com.cg.capbook.beans.User;
 import com.cg.capbook.daoservices.FriendRequestDAO;
 import com.cg.capbook.daoservices.UserDAO;
+import com.cg.capbook.exceptions.EmptyFriendListException;
+import com.cg.capbook.exceptions.FriendRequestException;
 import com.cg.capbook.exceptions.IncorrectPasswordException;
 import com.cg.capbook.exceptions.UserNotFoundException;
 @Component
@@ -23,38 +22,42 @@ public class UserServicesImpl implements UserServices{
 		return user;
 	}
 	@Override
-	public User getUserDetails(String emailid,String password) throws UserNotFoundException, IncorrectPasswordException {
-		User user=userDAO.findById(emailid).orElseThrow(()->new UserNotFoundException("User Details Not found"));
+	public User getUserDetails(String emailId,String password) throws UserNotFoundException, IncorrectPasswordException {
+		User user=userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User Details Not found"));
 		if(!user.getPassword().equals(password)) throw new IncorrectPasswordException("Incorrect Password");
 		return user;
 	}
 	@Override
-	public User searchUserByName(String fullName) {
-
-		return null;
+	public ArrayList<User> getAllUsers() {
+		return (ArrayList<User>) userDAO.findAll();
 	}
 	@Override
-	public void sendFriendRequest(String senderEmail, String receiverEmail) throws UserNotFoundException {
-		userDAO.findById(senderEmail).orElseThrow(()->new UserNotFoundException("User Details Not found"));
+	public void sendFriendRequest(String senderEmail, String receiverEmail) throws UserNotFoundException, FriendRequestException {
+		User sender=userDAO.findById(senderEmail).orElseThrow(()->new UserNotFoundException("User Details Not found"));
 		userDAO.findById(receiverEmail).orElseThrow(()->new UserNotFoundException("User Details Not found"));
-		if(senderEmail.equals(receiverEmail)) throw new UserNotFoundException("Cannot send to your own account");
-		FriendRequest request=friendRequestDAO.getFriendRequestId(senderEmail, receiverEmail);
-		if(request!=null) throw new UserNotFoundException("Request already sent");
+		if(senderEmail.equals(receiverEmail)) throw new FriendRequestException("Cannot send to your own account");
+		if(sender.getFriendList()!=null){
+			for(String email:sender.getFriendList())
+				if(receiverEmail.equals(email)) throw new FriendRequestException("Already friends");}
+		FriendRequest request1=friendRequestDAO.getFriendRequestId(senderEmail, receiverEmail);
+		FriendRequest request2=friendRequestDAO.getFriendRequestId(receiverEmail,senderEmail);
+		if(request1!=null) throw new FriendRequestException("Request already sent");
+		if(request2!=null) throw new FriendRequestException("Request pending from sender");
 		FriendRequest friendRequest=new FriendRequest(senderEmail,receiverEmail);
 		friendRequestDAO.save(friendRequest);
 	}
 	@Override
-	public void acceptFriendRequest(String senderEmail, String receiverEmail) throws UserNotFoundException {
+	public void acceptFriendRequest(String senderEmail, String receiverEmail) throws UserNotFoundException, FriendRequestException {
 		User sender=userDAO.findById(senderEmail).orElseThrow(()->new UserNotFoundException("Sender Details Not found"));
 		User receiver=userDAO.findById(receiverEmail).orElseThrow(()->new UserNotFoundException("Receiver Details Not found"));
 		FriendRequest request=friendRequestDAO.getFriendRequestId(senderEmail, receiverEmail);
-		if(request==null) throw new UserNotFoundException("Request not found exception");
-		
+		if(request==null) throw new FriendRequestException("Request not found exception");
+
 		if(sender.getFriendList()==null) 
 			sender.setFriendList(new ArrayList<>());
 		if(receiver.getFriendList()==null) 
 			receiver.setFriendList(new ArrayList<>());
-		
+
 		sender.getFriendList().add(receiverEmail);
 		receiver.getFriendList().add(senderEmail);
 		userDAO.save(sender);
@@ -62,15 +65,36 @@ public class UserServicesImpl implements UserServices{
 		friendRequestDAO.delete(request);
 	}
 	@Override
-	public ArrayList<String> getUserFriendList(String emailId) throws UserNotFoundException {
+	public ArrayList<String> getUserFriendList(String emailId) throws UserNotFoundException, EmptyFriendListException {
 		User user= userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException());
 		ArrayList<String> friendList = new ArrayList<>();
-		if(user.getFriendList().isEmpty())
-			System.out.println("What a loser. No friends");
-		else
-			System.out.println("Good for you");
+		if(user.getFriendList().isEmpty()) throw new EmptyFriendListException("Friend list is empty");
 		for(String email : user.getFriendList())
 			friendList.add(userDAO.findById(email).get().getFullName());
 		return friendList;
 	}
+	@Override
+	public void deleteFriendRequest(String senderEmail, String receiverEmail)
+			throws UserNotFoundException, FriendRequestException {
+		userDAO.findById(senderEmail).orElseThrow(()->new UserNotFoundException("Sender Details Not found"));
+		userDAO.findById(receiverEmail).orElseThrow(()->new UserNotFoundException("Receiver Details Not found"));
+		FriendRequest request=friendRequestDAO.getFriendRequestId(senderEmail, receiverEmail);
+		if(request==null) throw new FriendRequestException("No Requests Found");
+		friendRequestDAO.delete(request);
+	}
+	@Override
+	public void changePassword(String emailId,String oldPassword, String newPassword, String confirmNewPassword) throws UserNotFoundException, IncorrectPasswordException {
+		User user=userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User not found"));
+		if(!oldPassword.equals(user.getPassword())) throw new IncorrectPasswordException("Incorrect Password");
+		if(newPassword.equals(confirmNewPassword))
+			user.setPassword(newPassword);
+		else throw new IncorrectPasswordException("Password Mismatch");
+	}
+	@Override
+	public void forgotPassword(String emailId, String securityQuestion, String securityAnswer, String newPassword) throws UserNotFoundException, IncorrectPasswordException {
+	User user=userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User not found"))	;
+	if(user.getSecurityQuestion().equals(securityQuestion) && user.getSecurityAnswer().equals(securityAnswer))
+		user.setPassword(newPassword);
+	else throw new IncorrectPasswordException("Incorrect Question or Answer");
+	}	
 }

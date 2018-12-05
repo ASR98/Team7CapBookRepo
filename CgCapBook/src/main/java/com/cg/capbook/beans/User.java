@@ -1,32 +1,29 @@
 package com.cg.capbook.beans;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+@SuppressWarnings("serial")
 @Entity(name="Users")
 public class User implements Serializable {
 	@Id
-	private String emailid;
+	private String emailId;
 	private String firstName,lastName,gender;
 	private long phoneNumber;
 	private String dateOfBirth;
 	private String password,confirmPassword;
 	private String fullName;
-	
+	private String securityQuestion,securityAnswer;
 	private ArrayList<String> friendList;
 	public User() {
 		super();
 	}
-
 	public User(String firstName, String lastName, String emailid, String gender, long phoneNumber, String dateOfBirth,
 			String password, String confirmPassword) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.emailid = emailid;
+		this.emailId = emailid;
 		this.gender = gender;
 		this.phoneNumber = phoneNumber;
 		this.dateOfBirth = dateOfBirth;
@@ -51,11 +48,11 @@ public class User implements Serializable {
 	}
 
 	public String getEmailid() {
-		return emailid;
+		return emailId;
 	}
 
 	public void setEmailid(String emailid) {
-		this.emailid = emailid;
+		this.emailId = emailid;
 	}
 
 	public String getGender() {
@@ -115,13 +112,25 @@ public class User implements Serializable {
 		this.fullName = firstName+" "+lastName;;
 	}
 
+	public String getSecurityQuestion() {
+		return securityQuestion;
+	}
+	public void setSecurityQuestion(String securityQuestion) {
+		this.securityQuestion = securityQuestion;
+	}
+	public String getSecurityAnswer() {
+		return securityAnswer;
+	}
+	public void setSecurityAnswer(String securityAnswer) {
+		this.securityAnswer = securityAnswer;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((confirmPassword == null) ? 0 : confirmPassword.hashCode());
 		result = prime * result + ((dateOfBirth == null) ? 0 : dateOfBirth.hashCode());
-		result = prime * result + ((emailid == null) ? 0 : emailid.hashCode());
+		result = prime * result + ((emailId == null) ? 0 : emailId.hashCode());
 		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
 		result = prime * result + ((gender == null) ? 0 : gender.hashCode());
 		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
@@ -129,7 +138,6 @@ public class User implements Serializable {
 		result = prime * result + (int) (phoneNumber ^ (phoneNumber >>> 32));
 		return result;
 	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -149,10 +157,10 @@ public class User implements Serializable {
 				return false;
 		} else if (!dateOfBirth.equals(other.dateOfBirth))
 			return false;
-		if (emailid == null) {
-			if (other.emailid != null)
+		if (emailId == null) {
+			if (other.emailId != null)
 				return false;
-		} else if (!emailid.equals(other.emailid))
+		} else if (!emailId.equals(other.emailId))
 			return false;
 		if (firstName == null) {
 			if (other.firstName != null)
@@ -178,12 +186,9 @@ public class User implements Serializable {
 			return false;
 		return true;
 	}
-
 	@Override
 	public String toString() {
-		return "SignUp [firstName=" + firstName + ", lastName=" + lastName + ", emailid=" + emailid + ", gender=" + gender
+		return "SignUp [firstName=" + firstName + ", lastName=" + lastName + ", emailid=" + emailId + ", gender=" + gender
 				+ ", phoneNumber=" + phoneNumber + ", dateOfBirth=" + dateOfBirth + "]";
 	}
-
-
 }
