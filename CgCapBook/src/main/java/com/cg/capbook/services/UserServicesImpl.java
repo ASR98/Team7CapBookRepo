@@ -99,5 +99,18 @@ public class UserServicesImpl implements UserServices{
 		user.setPassword(newPassword);
 		userDAO.save(user);}
 	else throw new IncorrectPasswordException("Incorrect Question or Answer");
+	}
+	@Override
+	public ArrayList<String> getAllFriendRequest(String receiverEmail) throws UserNotFoundException, EmptyFriendListException {
+		User user=userDAO.findById(receiverEmail).orElseThrow(()->new UserNotFoundException("User not found"))	;
+		ArrayList<String> friendList = friendRequestDAO.getAllFriendRequest(receiverEmail);
+		if(friendList.isEmpty()) throw new EmptyFriendListException("Friend list is empty");
+		ArrayList<String> friendListName = new ArrayList<>();
+		for(String email : friendList)
+			friendListName.add(userDAO.findById(email).get().getFullName());
+		return friendListName;
+		 
 	}	
+	
+	
 }

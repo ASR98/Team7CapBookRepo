@@ -1,4 +1,7 @@
 package com.cg.capbook.daoservices;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,4 +11,6 @@ public interface FriendRequestDAO extends JpaRepository<FriendRequest, Integer>{
 	FriendRequest deleteFriendRequest(@Param("senderEmail")String senderEmail,@Param("receiverEmail")String receiverEmail);
 	@Query("select f from FriendRequest f  where f.senderEmail=:senderEmail and f.receiverEmail=:receiverEmail")
 	FriendRequest getFriendRequestId(@Param("senderEmail")String senderEmail,@Param("receiverEmail")String receiverEmail);
+	@Query("select f.senderEmail from FriendRequest f  where f.receiverEmail=:receiverEmail")
+	ArrayList<String> getAllFriendRequest(@Param("receiverEmail")String receiverEmail); 
 }
