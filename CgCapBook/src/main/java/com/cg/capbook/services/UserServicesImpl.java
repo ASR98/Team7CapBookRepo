@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.cg.capbook.beans.FriendRequest;
+import com.cg.capbook.beans.FriendsList;
 import com.cg.capbook.beans.User;
+import com.cg.capbook.daoservices.FriendListDAO;
 import com.cg.capbook.daoservices.FriendRequestDAO;
 import com.cg.capbook.daoservices.UserDAO;
 import com.cg.capbook.exceptions.EmptyFriendListException;
@@ -19,6 +21,8 @@ public class UserServicesImpl implements UserServices{
 	UserDAO userDAO;
 	@Autowired
 	FriendRequestDAO friendRequestDAO;
+	@Autowired
+	FriendListDAO friendListDAO;
 	private String passwordHashing(String actualPassword) throws NoSuchAlgorithmException {
 		MessageDigest hashingMethod= MessageDigest.getInstance("MD5");
 		byte[] messageDigest = hashingMethod.digest(actualPassword.getBytes());
@@ -30,7 +34,9 @@ public class UserServicesImpl implements UserServices{
 		return hashPassword;
 	}
 	@Override
-	public User acceptUserDetails(User user) throws NoSuchAlgorithmException {
+	public User acceptUserDetails(User user) throws NoSuchAlgorithmException, UserNotFoundException {
+		if(!userDAO.findAll().isEmpty())
+		if(userDAO.findById(user.getEmailid()).isPresent()) throw new UserNotFoundException("Account already exists with existing emailid");
 		user.setPassword(passwordHashing(user.getPassword()));
 		user.setConfirmPassword(user.getPassword());
 		user=userDAO.save(user);
@@ -52,9 +58,9 @@ public class UserServicesImpl implements UserServices{
 		User sender=userDAO.findById(senderEmail).orElseThrow(()->new UserNotFoundException("User Details Not found"));
 		userDAO.findById(receiverEmail).orElseThrow(()->new UserNotFoundException("User Details Not found"));
 		if(senderEmail.equals(receiverEmail)) throw new FriendRequestException("Cannot send to your own account");
-		if(sender.getFriendList()!=null){
+		/*	if(sender.getFriendList()!=null){
 			for(String email:sender.getFriendList())
-				if(receiverEmail.equals(email)) throw new FriendRequestException("Already friends");}
+				if(receiverEmail.equals(email)) throw new FriendRequestException("Already friends");}*/
 		FriendRequest request1=friendRequestDAO.getFriendRequestId(senderEmail, receiverEmail);
 		FriendRequest request2=friendRequestDAO.getFriendRequestId(receiverEmail,senderEmail);
 		if(request1!=null) throw new FriendRequestException("Request already sent");
@@ -69,25 +75,29 @@ public class UserServicesImpl implements UserServices{
 		FriendRequest request=friendRequestDAO.getFriendRequestId(senderEmail, receiverEmail);
 		if(request==null) throw new FriendRequestException("Request not found exception");
 
-		if(sender.getFriendList()==null) 
+		/*	if(sender.getFriendList()==null) 
 			sender.setFriendList(new ArrayList<>());
 		if(receiver.getFriendList()==null) 
-			receiver.setFriendList(new ArrayList<>());
-
-		sender.getFriendList().add(receiverEmail);
+			receiver.setFriendList(new ArrayList<>());*/
+		FriendsList friendsList1 = new FriendsList(receiverEmail, senderEmail);
+		//FriendsList friendsList2 = new FriendsList(senderEmail,receiverEmail);
+		/*sender.getFriendList().add(receiverEmail);
 		receiver.getFriendList().add(senderEmail);
 		userDAO.save(sender);
-		userDAO.save(receiver);
+		userDAO.save(receiver);*/
+		friendListDAO.save(friendsList1);
+		//	friendListDAO.save(friendsList2);
 		friendRequestDAO.delete(request);
 	}
 	@Override
 	public ArrayList<String> getUserFriendList(String emailId) throws UserNotFoundException, EmptyFriendListException {
 		User user= userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException());
-		ArrayList<String> friendList = new ArrayList<>();
-		if(user.getFriendList().isEmpty()) throw new EmptyFriendListException("Friend list is empty");
-		for(String email : user.getFriendList())
-			friendList.add(userDAO.findById(email).get().getFullName());
-		return friendList;
+		ArrayList<String> friendList = friendListDAO.getAllFriendsList(emailId);
+		ArrayList<String> friendsList = new ArrayList<>();
+		if(friendList.isEmpty()) throw new EmptyFriendListException("Friend list is empty");
+		for(String email : friendList)
+			friendsList.add(userDAO.findById(email).get().getFullName());
+		return friendsList;
 	}
 	@Override
 	public void deleteFriendRequest(String senderEmail, String receiverEmail)
@@ -105,16 +115,16 @@ public class UserServicesImpl implements UserServices{
 		if(oldPassword.equals(newPassword)) throw new IncorrectPasswordException("Please Enter password that is different from old password");
 		if(newPassword.equals(confirmNewPassword)) {
 			user.setPassword(newPassword);
-		userDAO.save(user);}
+			userDAO.save(user);}
 		else throw new IncorrectPasswordException("Password Mismatch");
 	}
 	@Override
 	public void forgotPassword(String emailId, String securityQuestion, String securityAnswer, String newPassword) throws UserNotFoundException, IncorrectPasswordException {
-	User user=userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User not found"))	;
-	if(user.getSecurityQuestion().equals(securityQuestion) && user.getSecurityAnswer().equals(securityAnswer)) {
-		user.setPassword(newPassword);
-		userDAO.save(user);}
-	else throw new IncorrectPasswordException("Incorrect Question or Answer");
+		User user=userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User not found"))	;
+		if(user.getSecurityQuestion().equals(securityQuestion) && user.getSecurityAnswer().equals(securityAnswer)) {
+			user.setPassword(newPassword);
+			userDAO.save(user);}
+		else throw new IncorrectPasswordException("Incorrect Question or Answer");
 	}
 	@Override
 	public ArrayList<String> getAllFriendRequestSent(String receiverEmail) throws UserNotFoundException, EmptyFriendListException {
@@ -125,7 +135,7 @@ public class UserServicesImpl implements UserServices{
 		for(String email : friendList)
 			friendListName.add(userDAO.findById(email).get().getFullName());
 		return friendListName;
-		 
+
 	}
 	@Override
 	public ArrayList<String> getAllFriendRequestReceived(String senderEmail)

@@ -1,8 +1,11 @@
 package com.cg.capbook.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Map;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 @SuppressWarnings("serial")
 @Entity(name="Users")
 public class User implements Serializable {
@@ -14,7 +17,8 @@ public class User implements Serializable {
 	private String password,confirmPassword;
 	private String fullName;
 	private String securityQuestion,securityAnswer;
-	private ArrayList<String> friendList;
+	/*@OneToMany
+	private Map<String, User> friendList;*/
 	public User() {
 		super();
 	}
@@ -95,13 +99,13 @@ public class User implements Serializable {
 		this.confirmPassword = confirmPassword;
 	}
 
-	public ArrayList<String> getFriendList() {
+	/*public ArrayList<String> getFriendList() {
 		return friendList;
 	}
 
 	public void setFriendList(ArrayList<String> friendList) {
 		this.friendList = friendList;
-	}
+	}*/
 
 	public String getFullName() {
 		setFullName();

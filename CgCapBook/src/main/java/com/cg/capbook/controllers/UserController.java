@@ -22,7 +22,7 @@ public class UserController {
 	@Autowired
 	UserServices userServices;
 	@RequestMapping(value="/signUp",method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-	public ResponseEntity<String> acceptUserDetails(@RequestBody  User user) throws NoSuchAlgorithmException{
+	public ResponseEntity<String> acceptUserDetails(@RequestBody  User user) throws NoSuchAlgorithmException, UserNotFoundException{
 		userServices.acceptUserDetails(user);
 		return new ResponseEntity<String>("User details accepted", HttpStatus.OK);
 	}
