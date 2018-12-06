@@ -5,11 +5,15 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
 import com.cg.capbook.beans.FriendRequest;
 import com.cg.capbook.beans.FriendsList;
+import com.cg.capbook.beans.UploadFile;
 import com.cg.capbook.beans.User;
 import com.cg.capbook.daoservices.FriendListDAO;
 import com.cg.capbook.daoservices.FriendRequestDAO;
+import com.cg.capbook.daoservices.UploadFileDAO;
 import com.cg.capbook.daoservices.UserDAO;
 import com.cg.capbook.exceptions.EmptyFriendListException;
 import com.cg.capbook.exceptions.FriendRequestException;
@@ -23,6 +27,8 @@ public class UserServicesImpl implements UserServices{
 	FriendRequestDAO friendRequestDAO;
 	@Autowired
 	FriendListDAO friendListDAO;
+	@Autowired
+	UploadFileDAO uploadFileDAO;
 	private String passwordHashing(String actualPassword) throws NoSuchAlgorithmException {
 		MessageDigest hashingMethod= MessageDigest.getInstance("MD5");
 		byte[] messageDigest = hashingMethod.digest(actualPassword.getBytes());
@@ -147,5 +153,27 @@ public class UserServicesImpl implements UserServices{
 		for(String email : friendList)
 			friendListName.add(userDAO.findById(email).get().getFullName());
 		return friendListName;
+	}
+	@Override
+	public void uploadProfilePicture(CommonsMultipartFile image, String emailId) throws UserNotFoundException {
+		User user=userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User Not Found"));
+		if (image != null) {
+			CommonsMultipartFile file = image;
+			UploadFile uploadFile = new UploadFile();
+			uploadFile.setFileName(emailId);
+			uploadFile.setUserName(user.getFullName());
+			uploadFile.setData(file.getBytes()); // image
+			uploadFileDAO.save(uploadFile);
+		
 	}	
+	
+}
+	@Override
+	public byte[] getProfilePicture(String emailId) throws UserNotFoundException {
+		User user = userDAO.findById(emailId).orElseThrow(()->new UserNotFoundException("User not found"));
+		UploadFile uploadFile = uploadFileDAO.getFile(emailId);
+		String name = uploadFile.getFileName();
+		byte[] imagefiles = uploadFile.getData();
+		return imagefiles;
+	}
 }
