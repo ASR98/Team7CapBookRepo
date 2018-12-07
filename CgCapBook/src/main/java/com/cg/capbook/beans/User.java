@@ -1,11 +1,8 @@
 package com.cg.capbook.beans;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Map;
-
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 @SuppressWarnings("serial")
 @Entity(name="Users")
 public class User implements Serializable {
@@ -17,10 +14,11 @@ public class User implements Serializable {
 	private String password,confirmPassword;
 	private String fullName;
 	private String securityQuestion,securityAnswer;
-	/*@OneToMany
-	private Map<String, User> friendList;*/
+	@Embedded
+	private Wall  wall;
 	public User() {
 		super();
+		wall = new Wall();
 	}
 	public User(String firstName, String lastName, String emailid, String gender, long phoneNumber, String dateOfBirth,
 			String password, String confirmPassword) {
@@ -33,8 +31,15 @@ public class User implements Serializable {
 		this.dateOfBirth = dateOfBirth;
 		this.password = password;
 		this.confirmPassword = confirmPassword;
+		wall = new Wall();
 	}
 
+	public Wall getWall() {
+		return wall;
+	}
+	public void setWall(Wall wall) {
+		this.wall = wall;
+	}
 	public String getFirstName() {
 		return firstName;
 	}
@@ -98,15 +103,6 @@ public class User implements Serializable {
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
 	}
-
-	/*public ArrayList<String> getFriendList() {
-		return friendList;
-	}
-
-	public void setFriendList(ArrayList<String> friendList) {
-		this.friendList = friendList;
-	}*/
-
 	public String getFullName() {
 		setFullName();
 		return fullName;

@@ -1,9 +1,4 @@
 package com.cg.capbook.controllers;
-
-import java.util.ArrayList;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,15 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-
 import com.cg.capbook.exceptions.EmptyFriendListException;
 import com.cg.capbook.exceptions.IncorrectPasswordException;
 import com.cg.capbook.exceptions.UserNotFoundException;
 import com.cg.capbook.services.UserServices;
-
 @RestController
 @CrossOrigin
 public class ImageUploadController {
