@@ -16,6 +16,7 @@ public class User implements Serializable {
 	private String securityQuestion,securityAnswer;
 	@Embedded
 	private Wall  wall;
+	private UpdateUser updateUser;
 	public User() {
 		super();
 		wall = new Wall();
@@ -39,6 +40,23 @@ public class User implements Serializable {
 	}
 	public void setWall(Wall wall) {
 		this.wall = wall;
+	}
+	public User(String emailId, String firstName, String lastName, long phoneNumber, String dateOfBirth,
+			UpdateUser updateUser) {
+		super();
+		this.emailId = emailId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phoneNumber = phoneNumber;
+		this.dateOfBirth = dateOfBirth;
+		this.updateUser = updateUser;
+	}
+	
+	public UpdateUser getUpdateUser() {
+		return updateUser;
+	}
+	public void setUpdateUser(UpdateUser updateUser) {
+		this.updateUser = updateUser;
 	}
 	public String getFirstName() {
 		return firstName;

@@ -15,6 +15,7 @@ public interface UserServices {
 	User acceptUserDetails(User user) throws NoSuchAlgorithmException, UserNotFoundException;
 	User getUserDetails(String emailId,String password) throws UserNotFoundException, IncorrectPasswordException, NoSuchAlgorithmException;
 	public ArrayList<User> getAllUsers();
+	void updateUserDetails(User user) throws UserNotFoundException;
 	
 	// Friends related
 	void sendFriendRequest(String senderEmail,String receiverEmail) throws UserNotFoundException, FriendRequestException;
@@ -23,6 +24,7 @@ public interface UserServices {
 	ArrayList<String> getAllFriendRequestSent(String receiverEmail) throws UserNotFoundException, EmptyFriendListException;
 	ArrayList<String> getAllFriendRequestReceived(String senderEmail) throws UserNotFoundException, EmptyFriendListException;
 	void deleteFriendRequest(String senderEmail,String receiverEmail) throws UserNotFoundException,FriendRequestException;
+	void referFriend(String senderEmail,String receiverEmail,String referredEmail) throws UserNotFoundException, FriendRequestException;
 	
 	//Password related
 	void changePassword(String emailId,String oldPassword,String newPassword,String confirmNewPassword) throws UserNotFoundException, IncorrectPasswordException;
