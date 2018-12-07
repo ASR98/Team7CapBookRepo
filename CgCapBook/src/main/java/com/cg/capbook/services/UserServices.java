@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import com.cg.capbook.beans.UpdateUser;
 import com.cg.capbook.beans.User;
 import com.cg.capbook.exceptions.EmptyFriendListException;
 import com.cg.capbook.exceptions.FriendRequestException;
@@ -23,4 +24,7 @@ public interface UserServices {
 	ArrayList<String> getAllFriendRequestReceived(String senderEmail) throws UserNotFoundException, EmptyFriendListException;
 	void uploadProfilePicture(CommonsMultipartFile image,String emailId) throws UserNotFoundException;
 	public byte[] getProfilePicture(String emailId) throws UserNotFoundException;
+	void updateUserDetails(User user) throws UserNotFoundException;
+	void referFriend(String senderEmail,String receiverEmail,String referredEmail) throws UserNotFoundException, FriendRequestException;
+	
 }

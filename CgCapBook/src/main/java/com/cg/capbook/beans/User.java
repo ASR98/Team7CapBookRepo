@@ -3,9 +3,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 @SuppressWarnings("serial")
 @Entity(name="Users")
 public class User implements Serializable {
@@ -17,6 +19,8 @@ public class User implements Serializable {
 	private String password,confirmPassword;
 	private String fullName;
 	private String securityQuestion,securityAnswer;
+	@Embedded
+	private UpdateUser updateUser;
 	/*@OneToMany
 	private Map<String, User> friendList;*/
 	public User() {
@@ -35,6 +39,24 @@ public class User implements Serializable {
 		this.confirmPassword = confirmPassword;
 	}
 
+	
+	public User(String emailId, String firstName, String lastName, long phoneNumber, String dateOfBirth,
+			UpdateUser updateUser) {
+		super();
+		this.emailId = emailId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phoneNumber = phoneNumber;
+		this.dateOfBirth = dateOfBirth;
+		this.updateUser = updateUser;
+	}
+	
+	public UpdateUser getUpdateUser() {
+		return updateUser;
+	}
+	public void setUpdateUser(UpdateUser updateUser) {
+		this.updateUser = updateUser;
+	}
 	public String getFirstName() {
 		return firstName;
 	}
