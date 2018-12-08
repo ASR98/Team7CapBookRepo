@@ -13,6 +13,7 @@ import com.cg.capbook.exceptions.EmptyFriendListException;
 import com.cg.capbook.exceptions.FriendRequestException;
 import com.cg.capbook.exceptions.IncorrectPasswordException;
 import com.cg.capbook.exceptions.PostNotFoundException;
+import com.cg.capbook.exceptions.ReferFriendsListEmpty;
 import com.cg.capbook.exceptions.UserNotFoundException;
 public interface UserServices {
 	
@@ -20,7 +21,6 @@ public interface UserServices {
 	User acceptUserDetails(User user) throws NoSuchAlgorithmException, UserNotFoundException;
 	User getUserDetails(String emailId,String password) throws UserNotFoundException, IncorrectPasswordException, NoSuchAlgorithmException;
 	public ArrayList<User> getAllUsers();
-	void updateUserDetails(User user) throws UserNotFoundException;
 	User getUserDetailsByEmail(String emailid) throws UserNotFoundException;
 	
 	// Friends related
@@ -47,4 +47,5 @@ public interface UserServices {
 	void deletePost(int postId) throws PostNotFoundException;
 	ArrayList<Post> getUserWall(String userEmailId) throws UserNotFoundException;
 	void updatePost(Post post) throws PostNotFoundException;
+	ArrayList<String> referredFriendsList(String receiverEmail) throws ReferFriendsListEmpty;
 }

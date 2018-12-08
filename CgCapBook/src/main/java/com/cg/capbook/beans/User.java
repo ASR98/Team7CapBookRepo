@@ -27,8 +27,6 @@ public class User implements Serializable {
 	private String maritalStatus;
 	@Embedded
 	private Wall wall;
-	@Embedded
-	private UpdateUser updateUser;
 	public User() {
 		super();
 	}
@@ -225,12 +223,6 @@ public class User implements Serializable {
 		this.wall = wall;
 	}
 	
-	public UpdateUser getUpdateUser() {
-		return updateUser;
-	}
-	public void setUpdateUser(UpdateUser updateUser) {
-		this.updateUser = updateUser;
-	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

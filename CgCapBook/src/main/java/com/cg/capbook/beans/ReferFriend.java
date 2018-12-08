@@ -11,7 +11,7 @@ public class ReferFriend {
 	@Id
 	@SequenceGenerator(initialValue=11,sequenceName="friendRef_seq",name="friendRef_seq",allocationSize=1)
 	@GeneratedValue(generator="friendRef_seq",strategy=GenerationType.AUTO)
-	private int requestId;
+	private int referId;
 	private String senderEmail, receiverEmail,referredEmail;
 	
 	public ReferFriend() {
@@ -20,7 +20,7 @@ public class ReferFriend {
 
 	public ReferFriend(int requestId, String senderEmail, String receiverEmail, String referredEmail) {
 		super();
-		this.requestId = requestId;
+		this.referId = requestId;
 		this.senderEmail = senderEmail;
 		this.receiverEmail = receiverEmail;
 		this.referredEmail = referredEmail;
@@ -33,12 +33,12 @@ public class ReferFriend {
 		this.referredEmail = referredEmail;
 	}
 
-	public int getRequestId() {
-		return requestId;
+	public int getReferId() {
+		return referId;
 	}
 
-	public void setRequestId(int requestId) {
-		this.requestId = requestId;
+	public void setReferId(int requestId) {
+		this.referId = requestId;
 	}
 
 	public String getSenderEmail() {

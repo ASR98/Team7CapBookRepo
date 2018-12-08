@@ -58,10 +58,5 @@ public class UserController {
 		User user=userServices.getUserDetailsByEmail(emailid);
 		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
-	@RequestMapping(value="/updateUserDetails",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-	public ResponseEntity<String> updateUserDetails(@RequestBody User user) throws UserNotFoundException, IncorrectPasswordException, EmptyFriendListException{
-		userServices.updateUserDetails(user);
-		return new ResponseEntity<String>("Updated Successfully", HttpStatus.OK);
-	}
 	
 }

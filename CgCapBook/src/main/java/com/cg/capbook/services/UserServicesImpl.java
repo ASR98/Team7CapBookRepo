@@ -29,6 +29,7 @@ import com.cg.capbook.exceptions.EmptyFriendListException;
 import com.cg.capbook.exceptions.FriendRequestException;
 import com.cg.capbook.exceptions.IncorrectPasswordException;
 import com.cg.capbook.exceptions.PostNotFoundException;
+import com.cg.capbook.exceptions.ReferFriendsListEmpty;
 import com.cg.capbook.exceptions.UserNotFoundException;
 import com.cg.capbook.util.SortByDateAsc;
 
@@ -47,6 +48,7 @@ public class UserServicesImpl implements UserServices {
 	CommentDAO commentDAO;
 	@Autowired
 	PostDAO postDAO;
+	@Autowired
 	ReferFriendDAO referFriendDAO;
 	private String passwordHashing(String actualPassword) throws NoSuchAlgorithmException {
 		MessageDigest hashingMethod = MessageDigest.getInstance("MD5");
@@ -80,24 +82,7 @@ public class UserServicesImpl implements UserServices {
 			throw new IncorrectPasswordException("Incorrect Password");
 		return user;
 	}
-	@Override
-	public void updateUserDetails(User user) throws UserNotFoundException {
-		User user1=userDAO.findById(user.getEmailid()).orElseThrow(()->new UserNotFoundException("User not found"));
-		//String city,state,country;
-		if(user.getFirstName()!=null)
-			user1.setFirstName(user.getFirstName());
-		if(user.getLastName()!=null)
-			user1.setLastName(user.getLastName());
-		if(user.getUpdateUser().getCity()!=null)
-			user1.getUpdateUser().setCity(user.getUpdateUser().getCity());
-
-		if(user.getUpdateUser().getState()!=null)
-			user1.getUpdateUser().setState(user.getUpdateUser().getState());
-
-		if(user.getUpdateUser().getCountry()!=null) 
-			user1.getUpdateUser().setCountry(user.getUpdateUser().getCountry());
-		userDAO.save(user1);
-	}
+	
 	// Sending and getting friend requests
 	@Override
 	public ArrayList<User> getAllUsers() {
@@ -122,6 +107,7 @@ public class UserServicesImpl implements UserServices {
 		FriendRequest friendRequest=new FriendRequest(senderEmail,receiverEmail);
 		friendRequestDAO.save(friendRequest);
 		return friendRequest;
+		
 	}
 
 	@Override
@@ -317,6 +303,16 @@ public class UserServicesImpl implements UserServices {
 		User user=userDAO.findById(emailid).orElseThrow(()->new UserNotFoundException());
 		List<FriendRequest> request=friendRequestDAO.getNotifications(emailid);
 		return request;
+	}
+
+	@Override
+	public ArrayList<String> referredFriendsList(String receiverEmail) throws ReferFriendsListEmpty {
+		ArrayList<String> referFriendList=referFriendDAO.getReferredFriendsList(receiverEmail);
+		if(referFriendList==null) throw new ReferFriendsListEmpty("No Existing Referred Friends");
+		ArrayList<String> referFriendsList = new ArrayList<>();
+		for(String email:referFriendList)
+			referFriendsList.add(userDAO.findById(email).get().getFullName());
+		return referFriendsList;
 	}
 	
 	
