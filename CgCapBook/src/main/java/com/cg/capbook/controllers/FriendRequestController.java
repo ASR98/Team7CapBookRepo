@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cg.capbook.beans.FriendRequest;
 import com.cg.capbook.exceptions.EmptyFriendListException;
 import com.cg.capbook.exceptions.FriendRequestException;
 import com.cg.capbook.exceptions.IncorrectPasswordException;
@@ -21,17 +22,17 @@ import com.cg.capbook.services.UserServices;
 public class FriendRequestController {
 	@Autowired
 	UserServices userServices;
-	@RequestMapping(value="/sendFriendRequest",method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-	public ResponseEntity<String> sendFriendRequest(@RequestParam String senderEmail,@RequestParam String receiverEmail) throws UserNotFoundException, FriendRequestException{
-		userServices.sendFriendRequest(senderEmail, receiverEmail);
-		return new ResponseEntity<String>("Friend Request Sent", HttpStatus.OK);
+	@RequestMapping(value="/sendFriendRequest",method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
+	public ResponseEntity<FriendRequest> sendFriendRequest(@RequestParam String senderEmail,@RequestParam String receiverEmail) throws UserNotFoundException, FriendRequestException{
+		FriendRequest request=userServices.sendFriendRequest(senderEmail, receiverEmail);
+		return new ResponseEntity<FriendRequest>(request, HttpStatus.OK);
 	}
-	@RequestMapping(value="/acceptFriendRequest",method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
+	@RequestMapping(value="/acceptFriendRequest",method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
 	public ResponseEntity<String> acceptFriendRequest(@RequestParam String senderEmail,@RequestParam String receiverEmail) throws UserNotFoundException, FriendRequestException{
 		userServices.acceptFriendRequest(senderEmail, receiverEmail);
 		return new ResponseEntity<String>("Friend Request Accepted", HttpStatus.OK);
 	}
-	@RequestMapping(value="/deleteFriendRequest",method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
+	@RequestMapping(value="/deleteFriendRequest",method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
 	public ResponseEntity<String> deleteFriendRequest(@RequestParam String senderEmail,@RequestParam String receiverEmail) throws UserNotFoundException, FriendRequestException{
 		userServices.deleteFriendRequest(senderEmail, receiverEmail);
 		return new ResponseEntity<String>("Request Deleted Succesfully", HttpStatus.OK);

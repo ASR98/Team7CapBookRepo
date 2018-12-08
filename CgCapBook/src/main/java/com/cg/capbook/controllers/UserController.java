@@ -1,6 +1,8 @@
 package com.cg.capbook.controllers;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.cg.capbook.beans.FriendRequest;
+import com.cg.capbook.beans.FriendsList;
 import com.cg.capbook.beans.User;
 import com.cg.capbook.exceptions.EmptyFriendListException;
 import com.cg.capbook.exceptions.IncorrectPasswordException;
@@ -26,15 +31,15 @@ public class UserController {
 		userServices.acceptUserDetails(user);
 		return new ResponseEntity<String>("User details accepted", HttpStatus.OK);
 	}
-	@RequestMapping(value="/signIn",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-	public ResponseEntity<String> getUserDetails(@RequestParam String emailid,@RequestParam String password) throws UserNotFoundException, IncorrectPasswordException, NoSuchAlgorithmException{
+	@RequestMapping(value="/signIn",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User> getUserDetails(@RequestParam("emailid") String emailid,@RequestParam("password") String password) throws UserNotFoundException, IncorrectPasswordException, NoSuchAlgorithmException{
 		User user=userServices.getUserDetails(emailid,password);
-		return new ResponseEntity<String>(user.toString(), HttpStatus.OK);
+		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
 
 	@RequestMapping(value="/getFriendList",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
-	public ResponseEntity<ArrayList<String>> getUserFriendDetails(@RequestParam("emailid") String emailid) throws UserNotFoundException, IncorrectPasswordException, EmptyFriendListException{
-		ArrayList<String> friendList =userServices.getUserFriendList(emailid);
+	public ResponseEntity<List<FriendsList>> getUserFriendDetails(@RequestParam("emailid") String emailid) throws UserNotFoundException, IncorrectPasswordException, EmptyFriendListException{
+		List<FriendsList> friendList =userServices.getUserFriendList(emailid);
 		return new ResponseEntity<>(friendList, HttpStatus.OK);
 	}
 	
@@ -42,6 +47,16 @@ public class UserController {
 	public ResponseEntity<ArrayList<User>> getAllUsers() throws UserNotFoundException, IncorrectPasswordException, EmptyFriendListException{
 		ArrayList<User> userList =userServices.getAllUsers();
 		return new ResponseEntity<>(userList, HttpStatus.OK);
+	}
+	@RequestMapping(value="/getNotification",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<FriendRequest>> getNotifications(@RequestParam("emailid") String emailid) throws UserNotFoundException{
+		List<FriendRequest> request=userServices.getNotifications(emailid);
+		return new ResponseEntity<>(request, HttpStatus.OK);
+	}
+	@RequestMapping(value="/profile",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User> getUserDetailsByEmail(@RequestParam("emailid") String emailid) throws UserNotFoundException{
+		User user=userServices.getUserDetailsByEmail(emailid);
+		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
 	@RequestMapping(value="/updateUserDetails",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE,headers="Accept=application/json")
 	public ResponseEntity<String> updateUserDetails(@RequestBody User user) throws UserNotFoundException, IncorrectPasswordException, EmptyFriendListException{
