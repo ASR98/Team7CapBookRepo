@@ -18,3 +18,6 @@ public interface FriendRequestDAO extends JpaRepository<FriendRequest, Integer>{
 	@Query("select f.receiverEmail from FriendRequest f  where f.senderEmail=:senderEmail ")
 	ArrayList<String> getAllFriendRequestSent(@Param("senderEmail")String senderEmail);
 }
+
+
+
