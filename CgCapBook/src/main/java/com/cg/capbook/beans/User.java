@@ -1,14 +1,10 @@
 package com.cg.capbook.beans;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
-
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 @SuppressWarnings("serial")
 @Entity(name="Users")
 public class User implements Serializable {
@@ -22,8 +18,6 @@ public class User implements Serializable {
 	private String securityQuestion,securityAnswer;
 	@Column(columnDefinition="BLOB")
 	private byte[] profilePic;
-	/*@OneToMany
-	private Map<String, User> friendList;*/
 	private String maritalStatus;
 	@Embedded
 	private Wall wall;
@@ -185,15 +179,6 @@ public class User implements Serializable {
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
 	}
-
-	/*public ArrayList<String> getFriendList() {
-		return friendList;
-	}
-
-	public void setFriendList(ArrayList<String> friendList) {
-		this.friendList = friendList;
-	}*/
-
 	public String getFullName() {
 		setFullName();
 		return fullName;
