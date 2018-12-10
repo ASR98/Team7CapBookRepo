@@ -9,4 +9,7 @@ import com.cg.capbook.beans.UploadFile;
 public interface UploadFileDAO extends JpaRepository<UploadFile, Integer>{
 @Query("Select a from UploadFile a where a.fileName=:emailId")
 UploadFile getFile(@Param("emailId")String emailId);
+//@Query("select a.albumName from UploadFile a where a.fileName=:emailId")
+ //UploadFile findByName(@Param("emailId")String emailId);
 }
+

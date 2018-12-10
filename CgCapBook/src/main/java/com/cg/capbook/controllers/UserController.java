@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.capbook.beans.FriendRequest;
 import com.cg.capbook.beans.FriendsList;
+import com.cg.capbook.beans.Message;
 import com.cg.capbook.beans.User;
 import com.cg.capbook.exceptions.EmptyFriendListException;
 import com.cg.capbook.exceptions.IncorrectPasswordException;
@@ -58,5 +59,24 @@ public class UserController {
 		User user=userServices.getUserDetailsByEmail(emailid);
 		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
-	
+	@RequestMapping(value="/sendMessage",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Message> sendMessage(@RequestParam("senderEmail") String senderEmail,@RequestParam("receiverEmail") String receiverEmail,@RequestParam("textMessage") String textMessage) throws UserNotFoundException{
+	Message message=userServices.sendMessage(senderEmail, receiverEmail, textMessage);
+		return new ResponseEntity<Message>(message, HttpStatus.OK);
+	}
+	@RequestMapping(value="/getSentMessage",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArrayList<Message>> getSentMessage(@RequestParam("senderEmail") String senderEmail) throws UserNotFoundException{
+		ArrayList<Message>message=userServices.getSentMessage(senderEmail);
+		return new ResponseEntity<ArrayList<Message>>(message, HttpStatus.OK);
+	}
+	@RequestMapping(value="/getReceivedMessage",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArrayList<Message>> getReceivedMessage(@RequestParam("receiverEmail") String receiverEmail) throws UserNotFoundException{
+		ArrayList<Message>message=userServices.getReceivedMessage(receiverEmail);
+		return new ResponseEntity<ArrayList<Message>>(message, HttpStatus.OK);
+	}
+	@RequestMapping(value="/updateUserDetails",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> updateUserDetails(@RequestBody  User user) throws UserNotFoundException{
+		userServices.updateUser(user);
+		return new ResponseEntity<String>("Details Updated", HttpStatus.OK);
+}
 }

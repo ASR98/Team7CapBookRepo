@@ -21,7 +21,7 @@ public class UploadFile {
 
 	@Column(name = "FILE_NAME")
 	private String fileName;
-
+	private String albumName;
 	@Lob // to store some image files, Large Object
 	@Column(name = "FILE_DATA")
 	private byte[] data;
@@ -34,6 +34,14 @@ public class UploadFile {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public String getAlbumName() {
+		return albumName;
+	}
+
+	public void setAlbumName(String albumName) {
+		this.albumName = albumName;
 	}
 
 	public String getFileName() {

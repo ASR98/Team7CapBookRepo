@@ -7,6 +7,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.cg.capbook.beans.FriendRequest;
 import com.cg.capbook.beans.FriendsList;
+import com.cg.capbook.beans.Message;
 import com.cg.capbook.beans.Post;
 import com.cg.capbook.beans.User;
 import com.cg.capbook.exceptions.EmptyFriendListException;
@@ -22,7 +23,7 @@ public interface UserServices {
 	User getUserDetails(String emailId,String password) throws UserNotFoundException, IncorrectPasswordException, NoSuchAlgorithmException;
 	public ArrayList<User> getAllUsers();
 	User getUserDetailsByEmail(String emailid) throws UserNotFoundException;
-	
+	User updateUser(User user) throws UserNotFoundException;
 	// Friends related
 	FriendRequest sendFriendRequest(String senderEmail,String receiverEmail) throws UserNotFoundException, FriendRequestException;
 	FriendRequest acceptFriendRequest(String senderEmail,String receiverEmail) throws UserNotFoundException, FriendRequestException;
@@ -48,4 +49,8 @@ public interface UserServices {
 	ArrayList<Post> getUserWall(String userEmailId) throws UserNotFoundException;
 	void updatePost(Post post) throws PostNotFoundException;
 	ArrayList<String> referredFriendsList(String receiverEmail) throws ReferFriendsListEmpty;
+	//Message Services
+	Message sendMessage(String senderEmail,String receiverEmail,String textMessage) throws UserNotFoundException;
+	ArrayList<Message> getSentMessage(String senderEmail) throws UserNotFoundException;
+	ArrayList<Message> getReceivedMessage(String receiverEmail) throws UserNotFoundException;
 }

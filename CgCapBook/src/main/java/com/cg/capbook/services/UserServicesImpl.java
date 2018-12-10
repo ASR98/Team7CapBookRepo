@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import com.cg.capbook.beans.FriendRequest;
 import com.cg.capbook.beans.FriendsList;
+import com.cg.capbook.beans.Message;
 import com.cg.capbook.beans.Post;
 import com.cg.capbook.beans.ReferFriend;
 import com.cg.capbook.beans.UploadFile;
@@ -21,6 +22,7 @@ import com.cg.capbook.beans.User;
 import com.cg.capbook.daoservices.CommentDAO;
 import com.cg.capbook.daoservices.FriendListDAO;
 import com.cg.capbook.daoservices.FriendRequestDAO;
+import com.cg.capbook.daoservices.MessageDAO;
 import com.cg.capbook.daoservices.PostDAO;
 import com.cg.capbook.daoservices.ReferFriendDAO;
 import com.cg.capbook.daoservices.UploadFileDAO;
@@ -50,6 +52,9 @@ public class UserServicesImpl implements UserServices {
 	PostDAO postDAO;
 	@Autowired
 	ReferFriendDAO referFriendDAO;
+	@Autowired
+	MessageDAO messageDAO;
+	
 	private String passwordHashing(String actualPassword) throws NoSuchAlgorithmException {
 		MessageDigest hashingMethod = MessageDigest.getInstance("MD5");
 		byte[] messageDigest = hashingMethod.digest(actualPassword.getBytes());
@@ -192,6 +197,13 @@ public class UserServicesImpl implements UserServices {
 		userDAO.findById(senderEmail).orElseThrow(()->new UserNotFoundException("Sender Details Not found"));
 		userDAO.findById(receiverEmail).orElseThrow(()->new UserNotFoundException("Receiver Details Not found"));
 		userDAO.findById(referredEmail).orElseThrow(()->new UserNotFoundException("Referred Details Not found"));
+		
+		FriendsList friendsList = friendListDAO.checkFriendList(senderEmail, receiverEmail);
+		if(friendsList==null) throw new FriendRequestException("You are not friends to send request");
+		friendsList=friendListDAO.checkFriendList(referredEmail, receiverEmail);
+		if(friendsList==null) throw new FriendRequestException("You cannot refer because you are not friends");
+		friendsList=friendListDAO.checkFriendList(referredEmail,senderEmail);
+		if(friendsList!=null) throw new FriendRequestException("Already Friends");
 		ReferFriend request=referFriendDAO.getReferFriendRequestId(senderEmail, receiverEmail,referredEmail);
 		if(request!=null) throw new FriendRequestException("Request already sent");
 		ReferFriend referFriend = new ReferFriend(senderEmail, receiverEmail, referredEmail);
@@ -304,7 +316,8 @@ public class UserServicesImpl implements UserServices {
 		List<FriendRequest> request=friendRequestDAO.getNotifications(emailid);
 		return request;
 	}
-
+	
+//Refer Friend
 	@Override
 	public ArrayList<String> referredFriendsList(String receiverEmail) throws ReferFriendsListEmpty {
 		ArrayList<String> referFriendList=referFriendDAO.getReferredFriendsList(receiverEmail);
@@ -314,6 +327,54 @@ public class UserServicesImpl implements UserServices {
 			referFriendsList.add(userDAO.findById(email).get().getFullName());
 		return referFriendsList;
 	}
-	
+	//Messages
+	@Override
+	public Message sendMessage(String senderEmail, String receiverEmail, String textMessage) throws UserNotFoundException {
+		User sender=userDAO.findById(senderEmail).orElseThrow(() -> new UserNotFoundException("User not found"));
+		User receiver=userDAO.findById(receiverEmail).orElseThrow(() -> new UserNotFoundException("User not found"));
+		Message message=new Message(textMessage, sender.getFullName(), receiver.getFullName(), senderEmail, receiverEmail);
+		return messageDAO.save(message);
+	}
+	@Override
+	public ArrayList<Message> getSentMessage(String senderEmail) throws UserNotFoundException {
+		User sender=userDAO.findById(senderEmail).orElseThrow(() -> new UserNotFoundException("User not found"));
+		ArrayList<Message> messages=messageDAO.getSentMessage(senderEmail);
+		return messages;
+	}
+	@Override
+	public ArrayList<Message> getReceivedMessage(String receiverEmail)throws UserNotFoundException  {
+		User sender=userDAO.findById(receiverEmail).orElseThrow(() -> new UserNotFoundException("User not found"));
+		ArrayList<Message> messages=messageDAO.getReceivedMessage(receiverEmail);
+		return messages;
+	}
+
+	@Override
+	public User updateUser(User user) throws UserNotFoundException {
+		User user1=userDAO.findById(user.getEmailid()).get();
+		if(user.getCity()!=null)
+			user1.setCity(user.getCity());
+		if(user.getFirstName()!=null)
+			user1.setFirstName(user.getFirstName());
+		if(user.getLastName()!=null)
+			user1.setLastName(user.getLastName());
+		if(user.getState()!=null)
+			user1.setState(user.getState());
+		if(user.getCountry()!=null)
+			user1.setCountry(user.getCountry());
+		if(user.getCollegeName()!=null)
+			user1.setCollegeName(user.getCollegeName());
+		if(user.getMaritalStatus()!=null)
+			user1.setMaritalStatus(user.getMaritalStatus());
+		if(user.getDateOfBirth()!=null)
+			user1.setDateOfBirth(user.getDateOfBirth());
+		if(user.getPhoneNumber()!=0)
+			user1.setPhoneNumber(user.getPhoneNumber());
+		if(user.getSecurityQuestion()!=null)
+			user1.setSecurityQuestion(user.getSecurityQuestion());
+		if(user.getSecurityAnswer()!=null)
+			user1.setSecurityAnswer(user.getSecurityAnswer());
+		userDAO.save(user1);
+		return user1;
+	}
 	
 }

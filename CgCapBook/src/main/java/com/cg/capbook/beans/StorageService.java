@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 @Service
 public class StorageService {
-private final Path rootLocation=Paths.get("D:\\1599672_lokeshkumar\\Angular\\angular application\\CapBook\\src\\userimages");
+private final Path rootLocation=Paths.get("D:\\159971_SunandanRaj\\Angular\\angular application\\CapBook\\src\\userimages");
 	
 	public void store(MultipartFile file) {
 		try {
